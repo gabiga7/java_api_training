@@ -1,20 +1,22 @@
 package fr.lernejo.navy_battle;
 
+import fr.lernejo.navy_battle.server.SimpleClientServer;
+import fr.lernejo.navy_battle.server.SimpleHttpServer;
+
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 
 public class Launcher {
-
-    public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
-        ProjectServer server = null;
-        try {
-            server = new ProjectServer(args[0]);
-            if (args.length > 1) {
-                MyHttpClient client = new MyHttpClient(server, args[1]);
-                client.connect();
+    public static void main(String[] args) throws IOException {
+        if (args.length != 0) {
+            SimpleHttpServer server = new SimpleHttpServer(args[0]);
+            server.Start();
+            if(args.length > 1) {
+                SimpleClientServer client = new SimpleClientServer(args[0], args[1]);
+                HttpResponse<String> response =  client.sendRequest();
             }
-        } catch (IOException | URISyntaxException error) {
-            throw error;
+        }else {
+            throw new IllegalArgumentException("Not enough arguments");
         }
     }
 }
